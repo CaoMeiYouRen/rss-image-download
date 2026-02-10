@@ -33,8 +33,7 @@
     "include": [
         "src/**/*.ts",
         "*.config.ts",
-        "eslint.config.js",
-        ".releaserc.cjs"
+        "*.config.js",
     ],
     "exclude": [
         "node_modules",

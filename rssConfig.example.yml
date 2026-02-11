@@ -1,0 +1,10 @@
+# RSS 订阅源配置
+sources:
+  - name: "微博热搜"
+    url: "https://rsshub.app/weibo/search/hot"
+  - name: "B站动态"
+    url: "https://rsshub.app/bilibili/user/dynamic/2267573"
+
+# 已知“被夹”图片的 MD5 列表（可选）
+clampedHashes:
+  - "7ac8659104fa2f9a72120e32f508006d" # 微博防盗链/屏蔽图 hash 示例

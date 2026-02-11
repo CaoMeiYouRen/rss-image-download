@@ -39,6 +39,7 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@types/archiver": "^7.0.0",
     "@types/debug": "^4.1.12",
     "@types/fs-extra": "^11.0.4",
     "@types/lodash-es": "^4.17.12",
@@ -85,7 +86,10 @@
     "url": "https://github.com/CaoMeiYouRen/rss-image-download/issues"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "await-to-js": "^3.0.0",
+    "axios": "^1.13.5",
+    "axios-retry": "^4.5.0",
     "cron": "^4.4.0",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.4",
@@ -93,6 +97,7 @@
     "lodash-es": "^4.17.23",
     "log4js": "^6.9.1",
     "p-queue": "^9.1.0",
+    "rss-parser": "^3.13.0",
     "tslib": "^2.8.1",
     "yaml": "^2.8.2",
     "zx": "^8.8.5"

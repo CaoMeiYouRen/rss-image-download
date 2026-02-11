@@ -168,6 +168,8 @@ async function archiveJob(targetDate?: Date) {
 async function bootstrap() {
     console.log('自动化图片下载服务已启动')
 
+    let isManual = false
+
     // 如果设置了抓取 Cron，则注册定时任务
     if (CRON_SCHEDULE) {
         console.log(`发现抓取 Cron 计划: ${CRON_SCHEDULE}`)
@@ -175,16 +177,17 @@ async function bootstrap() {
     } else {
         console.log('未发现抓取 Cron 计划，将立即执行一次。')
         await mainJob()
+        isManual = true
     }
 
     // 如果设置了备份 Cron
     if (ARCHIVE_CRON) {
         console.log(`发现备份 Cron 计划: ${ARCHIVE_CRON}`)
-        new CronJob(ARCHIVE_CRON, archiveJob, null, true)
-    } else if (!CRON_SCHEDULE) {
-        // 如果两个 Cron 都没有，且也没抓取计划，备份也执行一次（通常用于手动触发）
-        console.log('执行一次性备份任务...')
-        await archiveJob()
+        new CronJob(ARCHIVE_CRON, () => archiveJob(), null, true)
+    } else if (isManual) {
+        // 如果是手动模式且没有备份 Cron，立即备份今天下载的内容
+        console.log('执行一次性备份任务 (备份今日数据)...')
+        await archiveJob(new Date())
     }
 }
 

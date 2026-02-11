@@ -39,3 +39,4 @@ dist
 temp
 rssConfig.yml
 /data
+/public

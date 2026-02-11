@@ -16,3 +16,5 @@ export const PUSH_URL = process.env.PUSH_URL || '' // push-all-in-cloud 的部�
 export const PUSH_KEY = process.env.PUSH_KEY || '' // push-all-in-cloud 的 authToken
 export const PUSH_TYPE = process.env.PUSH_TYPE || '' // 推送渠道类型，如 'Dingtalk', 'WechatApp'
 export const PUSH_CONFIG = process.env.PUSH_CONFIG || '{}' // 推送渠道的完整配置 (JSON 字符串)
+
+export const DB_PATH = process.env.DB_PATH || 'data/data.db' // 数据库存储路径

@@ -1,8 +1,9 @@
 import path from 'node:path'
 import Database from 'better-sqlite3'
 import fs from 'fs-extra'
+import { DB_PATH as DB_FILE_PATH } from '@/env'
 
-const DB_PATH = path.join(process.cwd(), 'data.db')
+const DB_PATH = path.isAbsolute(DB_FILE_PATH) ? DB_FILE_PATH : path.join(process.cwd(), DB_FILE_PATH)
 fs.ensureDirSync(path.dirname(DB_PATH))
 
 const db = new Database(DB_PATH)

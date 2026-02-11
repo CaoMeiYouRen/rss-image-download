@@ -9,7 +9,7 @@ const { nodeFileTrace } = require('@vercel/nft');
     const pkg = await fs.readJSON(path.join(projectRoot, 'package.json'))
 
     let mainPath = ''
-    const mainPaths = ['dist/index.cjs', 'dist/index.mjs', 'dist/index.js']
+    const mainPaths = [pkg.main, 'dist/index.mjs', 'dist/index.js']
     for (const key of mainPaths) {
         const fullPath = path.join(projectRoot, key)
         if (await fs.pathExists(fullPath)) {

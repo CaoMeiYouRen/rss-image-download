@@ -38,3 +38,4 @@ sessions
 dist
 temp
 rssConfig.yml
+/data

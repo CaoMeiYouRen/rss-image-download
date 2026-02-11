@@ -1,4 +1,10 @@
-import { $ } from 'zx'
+import os from 'node:os'
+import { $, usePowerShell } from 'zx'
+
+// Windows 环境下切换到 PowerShell
+if (os.platform() === 'win32') {
+    usePowerShell()
+}
 
 // 设置 zx 的 quiet 模式，默认不打印。执行时通过 .quiet(false) 手动开启
 $.quiet = true

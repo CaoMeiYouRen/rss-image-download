@@ -1,6 +1,8 @@
 import path from 'node:path'
+import os from 'node:os'
 import fs from 'fs-extra'
 import YAML from 'yaml'
+import { usePowerShell } from 'zx'
 import { CronJob } from 'cron'
 import { Downloader } from './core/downloader'
 import { parseRss } from './core/rss'
@@ -25,6 +27,11 @@ import {
 
 const CONFIG_PATH = path.join(process.cwd(), 'rssConfig.yml')
 const DATA_DIR = path.join(process.cwd(), 'public/data')
+
+// Windows 环境下切换到 PowerShell
+if (os.platform() === 'win32') {
+    usePowerShell()
+}
 
 interface Config {
     sources: { name: string, url: string }[]

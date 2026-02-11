@@ -87,7 +87,7 @@ async function archiveJob() {
     try {
         const yesterday = new Date()
         yesterday.setDate(yesterday.getDate() - 1)
-        const dateStr = formatDate(yesterday)
+        const dateStr = `data-${formatDate(yesterday)}`
         const sourceDir = path.join(DATA_DIR, dateStr)
 
         if (!(await fs.pathExists(sourceDir))) {

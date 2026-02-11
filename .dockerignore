@@ -1,0 +1,14 @@
+node_modules
+dist
+data
+public/data
+.git
+.github
+.env
+.env.local
+*.log
+README.md
+LICENSE
+docs
+scripts
+!scripts/minify-docker.cjs

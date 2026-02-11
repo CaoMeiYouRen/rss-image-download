@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  app:
+    container_name: "rss-image-download"
+    image: ${DOCKER_IMAGE:-caomeiyouren/rss-image-download}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      TZ: "Asia/Shanghai"
+      # 你可以在这里设置环境变量，或者使用 .env 文件
+      BDUSS: ${BDUSS}
+      STOKEN: ${STOKEN}
+      PUSH_KEY: ${PUSH_KEY}
+      CRON_SCHEDULE: ${CRON_SCHEDULE}
+      ARCHIVE_CRON: ${ARCHIVE_CRON}
+      REMOTE_BACKUP_PATH: ${REMOTE_BACKUP_PATH}
+      DB_PATH: "/app/data/database.db"
+    volumes:
+      - ./data:/app/data
+      - ./public/data:/app/public/data
+      - ./rssConfig.yml:/app/rssConfig.yml
+      - ./.env:/app/.env

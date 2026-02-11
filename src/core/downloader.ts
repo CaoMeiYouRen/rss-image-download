@@ -58,7 +58,7 @@ export class Downloader {
                     return ext
                 }
             }
-        } catch (e) {
+        } catch {
             // ignore
         }
         return '.jpg'

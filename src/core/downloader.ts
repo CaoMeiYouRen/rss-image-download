@@ -27,6 +27,44 @@ export class Downloader {
     }
 
     /**
+     * 获取文件后缀名
+     * @param urlStr
+     */
+    private getExtension(urlStr: string): string {
+        try {
+            const url = new URL(urlStr)
+
+            // 如果是代理链接，尝试提取原始链接并解析
+            if (url.pathname.includes('http')) {
+                const decodedPath = decodeURIComponent(url.pathname)
+                const match = /(https?:\/\/[^\s]+)/.exec(decodedPath)
+                if (match) {
+                    return this.getExtension(match[1])
+                }
+            }
+
+            // 1. 优先从查询参数中获取 (针对 Twitter/WeChat 等)
+            const format = url.searchParams.get('format') || url.searchParams.get('wx_fmt')
+            if (format) {
+                return `.${format}`
+            }
+
+            // 2. 从路径中提取
+            let ext = path.extname(url.pathname)
+            if (ext) {
+                // 去掉后缀中可能带有的参数 (虽然 URL.pathname 理论上不带参数，但兼容一些奇葩情况)
+                ext = ext.split('?')[0].split('&')[0].split(':')[0]
+                if (ext.length > 1 && ext.length < 10) {
+                    return ext
+                }
+            }
+        } catch (e) {
+            // ignore
+        }
+        return '.jpg'
+    }
+
+    /**
      * 下载图片
      * @param url 图片链接
      * @param filename 建议文件名（可选，默认使用 URL MD5）
@@ -37,7 +75,7 @@ export class Downloader {
                 // 随机延迟避免被封
                 await sleep(Math.floor(Math.random() * 2000))
 
-                const ext = path.extname(new URL(url).pathname) || '.jpg'
+                const ext = this.getExtension(url)
                 const name = filename || crypto.createHash('md5').update(url).digest('hex')
                 const targetPath = path.join(this.outputDir, `${name}${ext}`)
 

@@ -1,72 +1,79 @@
 import { $ } from 'zx'
 
+// 设置 zx 的 quiet 模式，默认不打印。执行时通过 .quiet(false) 手动开启
+$.quiet = true
+
 /**
  * 使用 bduss 登录百度网盘
- *
- * @author CaoMeiYouRen
- * @date 2022-09-18
- * @param bduss
- * @param stoken
  */
 export async function loginByBduss(bduss: string, stoken: string) {
-    return $`BaiduPCS-Go login -bduss=${bduss} -stoken=${stoken}`
+    const flags = [
+        `-bduss=${bduss}`,
+        `-stoken=${stoken}`,
+    ]
+    return $`BaiduPCS-Go login ${flags}`.nothrow().quiet(false)
 }
 
 /**
  * 获取当前帐号
- *
- * @author CaoMeiYouRen
- * @date 2022-09-18
  */
 export async function who() {
-    return $`BaiduPCS-Go who`
+    return $`BaiduPCS-Go who`.nothrow().quiet(false)
 }
 
 /**
  * 上传本地文件到百度网盘
- *
- * @author CaoMeiYouRen
- * @date 2022-09-18
- * @param from 本地路径
- * @param to 远程路径
  */
 export async function upload(from: string, to: string) {
-    return $`BaiduPCS-Go upload "${from}" "${to}"`
+    const flags = [
+        from,
+        to,
+    ]
+    return $`BaiduPCS-Go upload ${flags}`.nothrow().quiet(false)
 }
 
 /**
  * 移动、重命名文件路径
- *
- * @author CaoMeiYouRen
- * @date 2022-09-18
- * @param from
- * @param to
  */
 export async function move(from: string, to: string) {
-    return $`BaiduPCS-Go mv "${from}" "${to}"`
+    const flags = [
+        from,
+        to,
+    ]
+    return $`BaiduPCS-Go mv ${flags}`.nothrow()
 }
 
 /**
  * 删除文件/目录
- *
- * @author CaoMeiYouRen
- * @date 2024-03-23
- * @param from
  */
 export async function remove(from: string) {
-    return $`BaiduPCS-Go rm "${from}"`
+    const flags = [
+        from,
+    ]
+    return $`BaiduPCS-Go rm ${flags}`.nothrow()
+}
+
+/**
+ * 搜索文件夹内的文件
+ * @param keyword 关键词
+ * @param path 搜索目录
+ */
+export async function search(keyword: string, path: string = '/') {
+    const flags = [
+        '-path',
+        path,
+        '-r',
+        keyword,
+    ]
+    const p = await $`BaiduPCS-Go search ${flags}`.nothrow()
+    return p.stdout
 }
 
 /**
  * 离线下载
- *
- * @author CaoMeiYouRen
- * @date 2024-03-23
- * @param url
- * @param to
  */
 export async function offlinedl(url: string, to: string) {
-    return $`BaiduPCS-Go offlinedl add -path=${to} ${url}`
+    return $`BaiduPCS-Go offlinedl add -path=${to} ${url}`.nothrow().quiet(false)
 }
 
 export const BaiduPCS = {
@@ -76,4 +83,5 @@ export const BaiduPCS = {
     who,
     remove,
     offlinedl,
+    search,
 }

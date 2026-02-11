@@ -81,13 +81,17 @@ async function mainJob() {
 
 /**
  * 备份任务：打包并上传
+ * @param targetDate 目标日期，默认为昨天
  */
-async function archiveJob() {
+async function archiveJob(targetDate?: Date) {
     console.log(`[${new Date().toLocaleString()}] 开始执行备份任务...`)
     try {
-        const yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1)
-        const dateStr = `data-${formatDate(yesterday)}`
+        const date = targetDate || new Date()
+        if (!targetDate) {
+            // 如果没传日期，默认备份昨天的目录
+            date.setDate(date.getDate() - 1)
+        }
+        const dateStr = formatDate(date)
         const sourceDir = path.join(DATA_DIR, dateStr)
 
         if (!(await fs.pathExists(sourceDir))) {
@@ -95,7 +99,7 @@ async function archiveJob() {
             return
         }
 
-        const zipFilename = `${dateStr}.zip`
+        const zipFilename = `data-${dateStr}.zip`
         const zipFile = path.join(DATA_DIR, zipFilename)
 
         // 检查是否已经上传过

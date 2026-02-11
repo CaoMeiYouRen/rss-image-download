@@ -6,7 +6,7 @@
         "allowJs": true,
         "checkJs": true,
         "sourceMap": false,
-        "rootDir": "./src",
+        "rootDir": "./",
         "outDir": "./dist",
         "declaration": true,
         "importHelpers": true,

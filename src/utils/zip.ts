@@ -17,6 +17,6 @@ export async function zipDirectory(sourceDir: string, outPath: string): Promise<
             .pipe(stream)
 
         stream.on('close', () => resolve())
-        archive.finalize()
+        void archive.finalize()
     })
 }

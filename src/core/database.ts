@@ -55,4 +55,4 @@ export function recordUpload(filePath: string, remotePath: string, status: strin
     `).run(filePath, remotePath, status)
 }
 
-export { db }
+export { }

@@ -148,6 +148,8 @@ async function archiveJob(targetDate?: Date) {
                     await fs.remove(zipFile)
                     await sendPush('备份成功', `日期: ${dateStr}\n文件名: ${zipFilename}`)
                     success = true
+                    // 清空已备份的文件夹
+                    await fs.emptyDir(sourceDir)
                     break
                 } else {
                     console.error(`上传失败 (第 ${attempt}/${maxRetry} 次尝试), 错误码: ${res.exitCode}`)

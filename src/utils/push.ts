@@ -11,10 +11,27 @@ export async function sendPush(title: string, content: string) {
         return
     }
     try {
-        const config = JSON.parse(PUSH_CONFIG)
+        const raw = JSON.parse(PUSH_CONFIG)
+        const config = raw?.config ?? raw
+        let option = raw?.option
+
+        // 兼容旧配置：当使用钉钉但未显式提供 option.msgtype 时，默认使用 markdown
+        if (!option && PUSH_TYPE === 'Dingtalk') {
+            option = {
+                msgtype: raw?.msgtype || 'markdown',
+            }
+        }
+
+        if (!option && raw?.msgtype) {
+            option = {
+                msgtype: raw.msgtype,
+            }
+        }
+
         const options: any = {
             type: PUSH_TYPE,
             config,
+            option,
         }
 
         if (PUSH_URL) {

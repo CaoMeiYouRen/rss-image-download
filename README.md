@@ -44,8 +44,19 @@
 2. **配置环境**
    复制 `.env.example` 为 `.env` 并填写相关信息：
    - `BDUSS` / `STOKEN`: 百度网盘凭证。
-   - `PUSH_TYPE` / `PUSH_CONFIG`: 推送通道配置。
+  - `PUSH_TYPE` / `PUSH_CONFIG`: 推送通道配置（推荐使用标准结构）。
    - `CRON_SCHEDULE`: 抓取频率（Cron 表达式）。
+
+  推荐示例（钉钉）：
+  ```sh
+  PUSH_TYPE=Dingtalk
+  PUSH_CONFIG={"config":{"DINGTALK_ACCESS_TOKEN":"your_token","DINGTALK_SECRET":"your_secret"},"option":{"msgtype":"markdown"}}
+  ```
+
+  兼容旧示例（仍可用）：
+  ```sh
+  PUSH_CONFIG={"DINGTALK_ACCESS_TOKEN":"your_token","DINGTALK_SECRET":"your_secret"}
+  ```
 
 3. **配置 RSS 源**
    复制 `rssConfig.example.yml` 为 `rssConfig.yml` 并添加您要监控的 RSSHub 或原生 RSS 链接。

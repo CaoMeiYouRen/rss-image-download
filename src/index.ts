@@ -77,9 +77,6 @@ async function mainJob() {
             }
         }
         console.log(`[${new Date().toLocaleString()}] RSS 抓取任务完成，共下载 ${downloadCount} 张图片。`)
-        if (downloadCount > 0) {
-            await sendPush('下载完成', `成功下载 ${downloadCount} 张图片。`)
-        }
     } catch (error) {
         console.error('任务执行失败:', error)
         await sendPush('抓取任务失败', error.message)
@@ -150,6 +147,8 @@ async function archiveJob(targetDate?: Date) {
                     success = true
                     // 清空已备份的文件夹
                     await fs.emptyDir(sourceDir)
+                    // 删除文件夹
+                    await fs.remove(sourceDir)
                     break
                 } else {
                     console.error(`上传失败 (第 ${attempt}/${maxRetry} 次尝试), 错误码: ${res.exitCode}`)

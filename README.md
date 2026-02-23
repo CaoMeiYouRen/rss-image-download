@@ -23,7 +23,7 @@
 - **BaiduPCS-Go 深度集成**：
     - 自动通过 `BDUSS` 和 `STOKEN` 登录。
     - **云端去重**：上传前查表 + 云端检索双重校验，处理了搜索关键词 22 字符限制（错误码 31023）。
-    - **自动打包**：每日自动将前一日图片打包为 ZIP 并上传。
+  - **聚合打包**：按文件数/总大小/累计天数阈值自动聚合多个日期目录并打包上传。
 - **多通道推送通知**：集成 [push-all-in-one](https://github.com/CaoMeiYouRen/push-all-in-one)，支持钉钉、企业微信、Server酱等多种通知方式。
 - **双模运行**：
     - 配置 Cron 表达式后作为常驻服务运行。
@@ -46,6 +46,10 @@
    - `BDUSS` / `STOKEN`: 百度网盘凭证。
   - `PUSH_TYPE` / `PUSH_CONFIG`: 推送通道配置（推荐使用标准结构）。
    - `CRON_SCHEDULE`: 抓取频率（Cron 表达式）。
+  - `ARCHIVE_TRIGGER_MAX_FILES`: 文件数触发阈值。
+  - `ARCHIVE_TRIGGER_MAX_SIZE`: 大小触发阈值（支持 `better-bytes` 格式，例如 `2GiB`）。
+  - `ARCHIVE_MAX_PENDING_DAYS`: 累计天数兜底阈值。
+  - `ARCHIVE_INCLUDE_TODAY`: 定时备份是否包含当天目录。
 
   推荐示例（钉钉）：
   ```sh
@@ -56,6 +60,14 @@
   兼容旧示例（仍可用）：
   ```sh
   PUSH_CONFIG={"DINGTALK_ACCESS_TOKEN":"your_token","DINGTALK_SECRET":"your_secret"}
+  ```
+
+  聚合备份阈值示例：
+  ```sh
+  ARCHIVE_TRIGGER_MAX_FILES=1000
+  ARCHIVE_TRIGGER_MAX_SIZE=2GiB
+  ARCHIVE_MAX_PENDING_DAYS=3
+  ARCHIVE_INCLUDE_TODAY=false
   ```
 
 3. **配置 RSS 源**

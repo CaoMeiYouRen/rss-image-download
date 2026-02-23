@@ -4,9 +4,10 @@ import fs from 'fs-extra'
 import YAML from 'yaml'
 import { usePowerShell } from 'zx'
 import { CronJob } from 'cron'
+import { format as formatBytes } from 'better-bytes'
 import { Downloader } from './core/downloader'
 import { parseRss } from './core/rss'
-import { zipDirectory } from './utils/zip'
+import { zipDirectories } from './utils/zip'
 import { BaiduPCS } from './utils/baidu'
 import { formatDate } from './utils/helper'
 import {
@@ -23,6 +24,10 @@ import {
     CRON_SCHEDULE,
     ARCHIVE_CRON,
     REMOTE_BACKUP_PATH,
+    ARCHIVE_TRIGGER_MAX_FILES,
+    ARCHIVE_TRIGGER_MAX_BYTES,
+    ARCHIVE_MAX_PENDING_DAYS,
+    ARCHIVE_INCLUDE_TODAY,
 } from './env'
 
 const CONFIG_PATH = path.join(process.cwd(), 'rssConfig.yml')
@@ -38,12 +43,82 @@ interface Config {
     clampedHashes?: string[]
 }
 
+interface DirectoryStats {
+    fileCount: number
+    totalSize: number
+}
+
+interface ArchiveCandidate extends DirectoryStats {
+    dateStr: string
+    dirPath: string
+}
+
+const DATE_DIR_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+
 async function loadConfig(): Promise<Config> {
     if (!(await fs.pathExists(CONFIG_PATH))) {
         throw new Error(`配置文件不存在: ${CONFIG_PATH}`)
     }
     const file = await fs.readFile(CONFIG_PATH, 'utf8')
     return YAML.parse(file)
+}
+
+async function getDirectoryStats(dirPath: string): Promise<DirectoryStats> {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true })
+    let fileCount = 0
+    let totalSize = 0
+
+    for (const entry of entries) {
+        const entryPath = path.join(dirPath, entry.name)
+        if (entry.isDirectory()) {
+            const childStats = await getDirectoryStats(entryPath)
+            fileCount += childStats.fileCount
+            totalSize += childStats.totalSize
+            continue
+        }
+
+        if (entry.isFile()) {
+            const stats = await fs.stat(entryPath)
+            fileCount++
+            totalSize += stats.size
+        }
+    }
+
+    return { fileCount, totalSize }
+}
+
+async function collectArchiveCandidates(includeToday: boolean): Promise<ArchiveCandidate[]> {
+    if (!(await fs.pathExists(DATA_DIR))) {
+        return []
+    }
+
+    const today = formatDate()
+    const entries = await fs.readdir(DATA_DIR, { withFileTypes: true })
+    const candidates: ArchiveCandidate[] = []
+
+    for (const entry of entries) {
+        if (!entry.isDirectory() || !DATE_DIR_PATTERN.test(entry.name)) {
+            continue
+        }
+
+        if (!includeToday && entry.name >= today) {
+            continue
+        }
+
+        const dirPath = path.join(DATA_DIR, entry.name)
+        const stats = await getDirectoryStats(dirPath)
+        if (stats.fileCount <= 0) {
+            continue
+        }
+
+        candidates.push({
+            dateStr: entry.name,
+            dirPath,
+            ...stats,
+        })
+    }
+
+    return candidates.sort((a, b) => a.dateStr.localeCompare(b.dateStr))
 }
 
 /**
@@ -84,27 +159,50 @@ async function mainJob() {
 }
 
 /**
- * 备份任务：打包并上传
- * @param targetDate 目标日期，默认为昨天
+ * 备份任务：聚合旧目录并按阈值打包上传
+ * @param includeToday 是否包含当天目录（默认由环境变量 ARCHIVE_INCLUDE_TODAY 决定）
  */
-async function archiveJob(targetDate?: Date) {
+async function archiveJob(includeToday: boolean = ARCHIVE_INCLUDE_TODAY) {
     console.log(`[${new Date().toLocaleString()}] 开始执行备份任务...`)
     try {
-        const date = targetDate || new Date()
-        if (!targetDate) {
-            // 如果没传日期，默认备份昨天的目录
-            date.setDate(date.getDate() - 1)
-        }
-        const dateStr = formatDate(date)
-        const sourceDir = path.join(DATA_DIR, dateStr)
-
-        if (!(await fs.pathExists(sourceDir))) {
-            console.log(`目录不存在，跳过备份: ${sourceDir}`)
+        const candidates = await collectArchiveCandidates(includeToday)
+        if (candidates.length === 0) {
+            console.log('没有可备份的目录，跳过。')
             return
         }
 
-        const zipFilename = `data-${dateStr}.zip`
+        let totalFiles = 0
+        let totalBytes = 0
+        const selected: ArchiveCandidate[] = []
+        let reachedThreshold = false
+
+        for (const candidate of candidates) {
+            selected.push(candidate)
+            totalFiles += candidate.fileCount
+            totalBytes += candidate.totalSize
+
+            const reachByFiles = totalFiles >= ARCHIVE_TRIGGER_MAX_FILES
+            const reachBySize = totalBytes >= ARCHIVE_TRIGGER_MAX_BYTES
+            const reachByDays = selected.length >= ARCHIVE_MAX_PENDING_DAYS
+            if (reachByFiles || reachBySize || reachByDays) {
+                reachedThreshold = true
+                break
+            }
+        }
+
+        if (!reachedThreshold) {
+            console.log(`未达到备份阈值，暂不打包。当前累计: ${totalFiles} 个文件, ${formatBytes(totalBytes)}。阈值: ${ARCHIVE_TRIGGER_MAX_FILES} 个文件 或 ${formatBytes(ARCHIVE_TRIGGER_MAX_BYTES)} 或 ${ARCHIVE_MAX_PENDING_DAYS} 天。`)
+            return
+        }
+
+        const startDate = selected[0].dateStr
+        const endDate = selected[selected.length - 1].dateStr
+        const range = startDate === endDate ? startDate : `${startDate}_to_${endDate}`
+
+        const zipFilename = `data-${range}.zip`
         const zipFile = path.join(DATA_DIR, zipFilename)
+
+        console.log(`本次将备份 ${selected.length} 个目录，${totalFiles} 个文件，总大小 ${formatBytes(totalBytes)}。`)
 
         // 检查是否已经上传过
         const status = getUploadStatus(zipFile)
@@ -127,8 +225,11 @@ async function archiveJob(targetDate?: Date) {
             }
         }
 
-        console.log(`正在打包: ${sourceDir} -> ${zipFile}`)
-        await zipDirectory(sourceDir, zipFile)
+        console.log(`正在打包: ${range} -> ${zipFile}`)
+        await zipDirectories(selected.map((item) => ({
+            dirPath: item.dirPath,
+            entryName: item.dateStr,
+        })), zipFile)
 
         console.log('正在上传至百度网盘...')
         if (BDUSS && STOKEN) {
@@ -143,12 +244,11 @@ async function archiveJob(targetDate?: Date) {
                     console.log(`上传成功 (第 ${attempt} 次尝试)`)
                     recordUpload(zipFile, REMOTE_BACKUP_PATH, 'success')
                     await fs.remove(zipFile)
-                    await sendPush('备份成功', `日期: ${dateStr}\n文件名: ${zipFilename}`)
+                    await sendPush('备份成功', `范围: ${range}\n文件名: ${zipFilename}\n文件数: ${totalFiles}\n大小: ${formatBytes(totalBytes)}`)
                     success = true
-                    // 清空已备份的文件夹
-                    await fs.emptyDir(sourceDir)
-                    // 删除文件夹
-                    await fs.remove(sourceDir)
+                    for (const item of selected) {
+                        await fs.remove(item.dirPath)
+                    }
                     break
                 } else {
                     console.error(`上传失败 (第 ${attempt}/${maxRetry} 次尝试), 错误码: ${res.exitCode}`)
@@ -159,7 +259,7 @@ async function archiveJob(targetDate?: Date) {
             }
 
             if (!success) {
-                await sendPush('备份失败', `日期: ${dateStr}\n文件名: ${zipFilename}\n已达到最大重试次数`)
+                await sendPush('备份失败', `范围: ${range}\n文件名: ${zipFilename}\n已达到最大重试次数`)
             }
         } else {
             console.warn('缺少百度网盘配置 (BDUSS/STOKEN)，跳过上传。')
@@ -193,9 +293,9 @@ async function bootstrap() {
         console.log(`发现备份 Cron 计划: ${ARCHIVE_CRON}`)
         new CronJob(ARCHIVE_CRON, () => archiveJob(), null, true)
     } else if (isManual) {
-        // 如果是手动模式且没有备份 Cron，立即备份今天下载的内容
-        console.log('执行一次性备份任务 (备份今日数据)...')
-        await archiveJob(new Date())
+        // 如果是手动模式且没有备份 Cron，允许包含当天目录进行一次性聚合备份
+        console.log('执行一次性备份任务 (允许包含今日目录)...')
+        await archiveJob(true)
     }
 }
 

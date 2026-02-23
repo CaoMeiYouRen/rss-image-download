@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import { parse as parseBytes } from 'better-bytes'
 
 dotenv.config()
 
@@ -11,6 +12,15 @@ export const REMOTE_BACKUP_PATH = process.env.REMOTE_BACKUP_PATH || '/apps/rss-i
 export const DOWNLOAD_CONCURRENCY = Number(process.env.DOWNLOAD_CONCURRENCY) || 5
 export const CRON_SCHEDULE = process.env.CRON_SCHEDULE || ''
 export const ARCHIVE_CRON = process.env.ARCHIVE_CRON || ''
+export const ARCHIVE_TRIGGER_MAX_FILES = Number(process.env.ARCHIVE_TRIGGER_MAX_FILES) || 1000
+
+const parsedArchiveTriggerMaxSize = parseBytes(process.env.ARCHIVE_TRIGGER_MAX_SIZE || '2GiB')
+if (parsedArchiveTriggerMaxSize === null) {
+    throw new Error(`ARCHIVE_TRIGGER_MAX_SIZE 配置无效: ${process.env.ARCHIVE_TRIGGER_MAX_SIZE}`)
+}
+export const ARCHIVE_TRIGGER_MAX_BYTES = Number(parsedArchiveTriggerMaxSize)
+export const ARCHIVE_MAX_PENDING_DAYS = Number(process.env.ARCHIVE_MAX_PENDING_DAYS) || 3
+export const ARCHIVE_INCLUDE_TODAY = process.env.ARCHIVE_INCLUDE_TODAY === 'true'
 
 export const PUSH_URL = process.env.PUSH_URL || '' // push-all-in-cloud 的部署地址
 export const PUSH_KEY = process.env.PUSH_KEY || '' // push-all-in-cloud 的 authToken

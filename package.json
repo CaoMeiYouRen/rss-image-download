@@ -93,7 +93,7 @@
     "axios": "^1.14.0",
     "axios-retry": "^4.5.0",
     "better-bytes": "^1.2.6",
-    "better-sqlite3": "^12.6.2",
+    "better-sqlite3": "^12.8.0",
     "cron": "^4.4.0",
     "dayjs": "^1.11.19",
     "dotenv": "^17.3.1",

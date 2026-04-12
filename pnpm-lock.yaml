@@ -27,11 +27,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       axios:
-        specifier: ^1.14.0
-        version: 1.14.0(debug@4.4.3)
+        specifier: ^1.15.0
+        version: 1.15.0(debug@4.4.3)
       axios-retry:
         specifier: ^4.5.0
-        version: 4.5.0(axios@1.14.0(debug@4.4.3))
+        version: 4.5.0(axios@1.15.0(debug@4.4.3))
       better-bytes:
         specifier: ^1.2.6
         version: 1.2.6
@@ -1125,8 +1125,8 @@ packages:
     peerDependencies:
       axios: 0.x || 1.x
 
-  axios@1.14.0:
-    resolution: {integrity: sha512-3Y8yrqLSwjuzpXuZ0oIYZ/XGgLwUIBU3uLvbcpb0pidD9ctpShJd43KSlEEkVQg6DS0G9NKyzOvBfUtDKEyHvQ==}
+  axios@1.15.0:
+    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
 
   b4a@1.7.3:
     resolution: {integrity: sha512-5Q2mfq2WfGuFp3uS//0s6baOJLMoVduPYVeNmDYxu5OUA1/cBfvr2RIS7vi62LdNj/urk1hfmj867I3qt6uZ7Q==}
@@ -5306,12 +5306,12 @@ snapshots:
 
   await-to-js@3.0.0: {}
 
-  axios-retry@4.5.0(axios@1.14.0(debug@4.4.3)):
+  axios-retry@4.5.0(axios@1.15.0(debug@4.4.3)):
     dependencies:
-      axios: 1.14.0(debug@4.4.3)
+      axios: 1.15.0(debug@4.4.3)
       is-retry-allowed: 2.2.0
 
-  axios@1.14.0(debug@4.4.3):
+  axios@1.15.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.15.11(debug@4.4.3)
       form-data: 4.0.5
@@ -7665,7 +7665,7 @@ snapshots:
   push-all-in-one@4.5.1:
     dependencies:
       '@colors/colors': 1.5.0
-      axios: 1.14.0(debug@4.4.3)
+      axios: 1.15.0(debug@4.4.3)
       debug: 4.4.3
       https-proxy-agent: 7.0.6
       nodemailer: 7.0.13

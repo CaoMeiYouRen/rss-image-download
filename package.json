@@ -90,7 +90,7 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "await-to-js": "^3.0.0",
-    "axios": "^1.14.0",
+    "axios": "^1.15.0",
     "axios-retry": "^4.5.0",
     "better-bytes": "^1.2.6",
     "better-sqlite3": "^12.8.0",

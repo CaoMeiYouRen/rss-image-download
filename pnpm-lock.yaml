@@ -60,8 +60,8 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0
       push-all-in-one:
-        specifier: ^4.5.1
-        version: 4.5.1
+        specifier: ^4.5.2
+        version: 4.5.2
       rss-parser:
         specifier: ^3.13.0
         version: 3.13.0
@@ -199,6 +199,10 @@ packages:
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
+    engines: {node: '>=0.1.90'}
+
+  '@colors/colors@1.6.0':
+    resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
     engines: {node: '>=0.1.90'}
 
   '@commitlint/cli@20.5.0':
@@ -2346,8 +2350,8 @@ packages:
     resolution: {integrity: sha512-2dYz766i9HprMBasCMvHMuazJ7u4WzhJwo5kb3iPSiW/iRYV6uPari3zHoqZlnuaR7V1bEiNMxikhp37rdBXbw==}
     engines: {node: '>=12'}
 
-  ip-address@10.1.0:
-    resolution: {integrity: sha512-XXADHxXmvT9+CRxhXg56LJovE+bmWnEWB78LB83VZTprKTmaC5QfruXocxzTZ2Kl0DNwKuBdlIhjL8LeY8Sf8Q==}
+  ip-address@10.1.1:
+    resolution: {integrity: sha512-1FMu8/N15Ck1BL551Jf42NYIoin2unWjLQ2Fze/DXryJRl5twqtwNHlO39qERGbIOcKYWHdgRryhOC+NG4eaLw==}
     engines: {node: '>= 12'}
 
   is-alphabetical@2.0.1:
@@ -3398,8 +3402,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  push-all-in-one@4.5.1:
-    resolution: {integrity: sha512-g0EME4nVmFMxhnMXAM30SpZIXjj4skUy7G0vDQVjyPTbxsiZn83EtK4V+c8Y5wyq6+grHkVW8Oemw9Q4ikVDYg==}
+  push-all-in-one@4.5.2:
+    resolution: {integrity: sha512-6peEgBiKlYYiP2LSms3dHRriPWLaMz1/pKYwqHRX4b4T3t48U7na4+zCy8GEb3MrdlVLZjl8hWYCRckAj+jxlw==}
     engines: {node: '>=20'}
 
   quansync@1.0.0:
@@ -3678,8 +3682,8 @@ packages:
     resolution: {integrity: sha512-HehCEsotFqbPW9sJ8WVYB6UbmIMv7kUUORIF2Nncq4VQvBfNBLibW9YZR5dlYCSUhwcD628pRllm7n+E+YTzJw==}
     engines: {node: '>= 14'}
 
-  socks@2.8.7:
-    resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
+  socks@2.8.8:
+    resolution: {integrity: sha512-NlGELfPrgX2f1TAAcz0WawlLn+0r3FyhhCRpFFK2CemXenPYvzMWWZINv3eDNo9ucdwme7oCHRY0Jnbs4aIkog==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
   source-map-js@1.2.1:
@@ -4373,7 +4377,10 @@ snapshots:
       '@babel/helper-string-parser': 8.0.0-rc.4
       '@babel/helper-validator-identifier': 8.0.0-rc.3
 
-  '@colors/colors@1.5.0': {}
+  '@colors/colors@1.5.0':
+    optional: true
+
+  '@colors/colors@1.6.0': {}
 
   '@commitlint/cli@20.5.0(@types/node@25.5.0)(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(typescript@5.9.3)':
     dependencies:
@@ -6737,7 +6744,7 @@ snapshots:
       from2: 2.3.0
       p-is-promise: 3.0.0
 
-  ip-address@10.1.0: {}
+  ip-address@10.1.1: {}
 
   is-alphabetical@2.0.1: {}
 
@@ -7836,9 +7843,9 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  push-all-in-one@4.5.1:
+  push-all-in-one@4.5.2:
     dependencies:
-      '@colors/colors': 1.5.0
+      '@colors/colors': 1.6.0
       axios: 1.15.0(debug@4.4.3)
       debug: 4.4.3
       https-proxy-agent: 7.0.6
@@ -8270,13 +8277,13 @@ snapshots:
     dependencies:
       agent-base: 7.1.4
       debug: 4.4.3
-      socks: 2.8.7
+      socks: 2.8.8
     transitivePeerDependencies:
       - supports-color
 
-  socks@2.8.7:
+  socks@2.8.8:
     dependencies:
-      ip-address: 10.1.0
+      ip-address: 10.1.1
       smart-buffer: 4.2.0
 
   source-map-js@1.2.1: {}

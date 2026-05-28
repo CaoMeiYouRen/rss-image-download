@@ -1,6 +1,8 @@
 # Stage 1: Base (Node.js + pnpm)
 FROM caomeiyouren/alpine-nodejs:latest AS nodejs
 
+RUN corepack enable && corepack prepare pnpm@11 --activate
+
 # Stage 2: Builder
 FROM nodejs AS builder
 

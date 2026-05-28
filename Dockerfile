@@ -19,7 +19,7 @@ WORKDIR /app
 RUN apk add --no-cache python3 python3-dev py3-setuptools make g++ && \
     python3 --version
 
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 RUN pnpm i --frozen-lockfile
 

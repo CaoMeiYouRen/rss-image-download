@@ -1,7 +1,14 @@
 # Stage 1: Base (Node.js + pnpm)
 FROM caomeiyouren/alpine-nodejs:latest AS nodejs
 
-RUN corepack enable && corepack prepare pnpm@11 --activate
+RUN if command -v corepack >/dev/null 2>&1; then \
+      corepack enable && corepack prepare pnpm@11 --activate; \
+    elif command -v npm >/dev/null 2>&1; then \
+      npm install -g pnpm@11; \
+    else \
+      echo "corepack and npm are both unavailable"; \
+      exit 1; \
+    fi
 
 # Stage 2: Builder
 FROM nodejs AS builder
@@ -38,7 +45,7 @@ RUN export PROJECT_ROOT=/app/ && \
 # Stage 4: Production Runtime
 FROM caomeiyouren/alpine-nodejs-minimize:latest AS runtime
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 WORKDIR /app
 
 # Install curl/wget to download BaiduPCS-Go

@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 
 interface ZipDirectoryInput {
     dirPath: string
@@ -12,7 +12,7 @@ interface ZipDirectoryInput {
  * @param outPath 输出路径（包含文件名）
  */
 export async function zipDirectories(sources: ZipDirectoryInput[], outPath: string): Promise<void> {
-    const archive = archiver('zip', { zlib: { level: 9 } })
+    const archive = new ZipArchive({ zlib: { level: 9 } })
     const stream = fs.createWriteStream(outPath)
 
     return new Promise((resolve, reject) => {

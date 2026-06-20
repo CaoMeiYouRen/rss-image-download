@@ -10,7 +10,7 @@ export default defineConfig({
     nodeProtocol: true, // 为内置模块添加 node: 前缀（例如，fs → node:fs）
     sourcemap: true,
     clean: true,
-    dts: true,
+    dts: false, // 不生成 .d.ts 文件
     minify: false, // 缩小输出
     shims: true, // 注入 cjs 和 esm 填充代码，解决 import.meta.url 和 __dirname 的兼容问题
     // exports: true, // 自动生成包导出

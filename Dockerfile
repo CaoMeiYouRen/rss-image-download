@@ -1,5 +1,5 @@
 # Stage 1: Base (Node.js + pnpm)
-FROM caomeiyouren/alpine-nodejs:latest AS nodejs
+FROM caomeiyouren/alpine-nodejs:alpine3.22-node24.16 AS nodejs
 
 RUN if command -v corepack >/dev/null 2>&1; then \
       corepack enable && corepack prepare pnpm@11 --activate; \
@@ -43,7 +43,7 @@ RUN export PROJECT_ROOT=/app/ && \
     rm -rf /app/app-minimal
 
 # Stage 4: Production Runtime
-FROM caomeiyouren/alpine-nodejs-minimize:latest AS runtime
+FROM caomeiyouren/alpine-nodejs-minimize:alpine3.22-node24.16 AS runtime
 
 ENV NODE_ENV=production
 WORKDIR /app

@@ -7,6 +7,27 @@ updates:
       interval: monthly
       time: "04:00"
       timezone: Asia/Shanghai
+    groups:
+      archiver:
+        patterns:
+          - archiver
+          - '@types/archiver'
+      better-sqlite3:
+        patterns:
+          - better-sqlite3
+          - '@types/better-sqlite3'
+      debug:
+        patterns:
+          - debug
+          - '@types/debug'
+      fs-extra:
+        patterns:
+          - fs-extra
+          - '@types/fs-extra'
+      lodash-es:
+        patterns:
+          - lodash-es
+          - '@types/lodash-es'
   - package-ecosystem: github-actions
     directory: /
     open-pull-requests-limit: 20

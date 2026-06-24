@@ -8,6 +8,18 @@ import { sleep } from '@/utils/helper'
 
 axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay })
 
+const IMAGE_MIME_TO_EXT: Record<string, string> = {
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif',
+    'image/webp': '.webp',
+    'image/bmp': '.bmp',
+    'image/svg+xml': '.svg',
+    'image/avif': '.avif',
+    'image/tiff': '.tiff',
+}
+
 export interface DownloadOptions {
     concurrency?: number
     outputDir: string
@@ -24,6 +36,14 @@ export class Downloader {
         this.outputDir = options.outputDir
         this.clampedHashes = options.clampedHashes || []
         fs.ensureDirSync(this.outputDir)
+    }
+
+    /**
+     * 从 Content-Type 响应头获取文件后缀名
+     */
+    private getExtensionFromMime(contentType: string): string | null {
+        const mime = contentType.split(';')[0].trim().toLowerCase()
+        return IMAGE_MIME_TO_EXT[mime] || null
     }
 
     /**
@@ -92,17 +112,38 @@ export class Downloader {
                     },
                 })
 
+                // 检查 Content-Type，跳过非图片响应
+                const contentType = String(response.headers['content-type'] || '')
+                const mimeExt = this.getExtensionFromMime(contentType)
+                if (!mimeExt) {
+                    console.log(`跳过非图片响应 [${contentType || '未知'}]: ${url}`)
+                    return null
+                }
+
+                // 如果 URL 无法解析出有效后缀，使用 Content-Type 确定的后缀
+                const finalExt = (ext === '.jpg' && !url.includes('.')) ? mimeExt : ext
+
                 const buffer = Buffer.from(response.data)
                 const hash = crypto.createHash('md5').update(buffer).digest('hex')
 
-                // 防“夹”检测
+                // 防"夹"检测
                 if (this.clampedHashes.includes(hash)) {
                     console.log(`跳过被夹图片: ${url}`)
                     return null
                 }
 
-                await fs.writeFile(targetPath, buffer)
-                return targetPath
+                // 如果后缀因 Content-Type 改变，更新目标路径
+                const finalPath = finalExt !== ext
+                    ? path.join(this.outputDir, `${name}${finalExt}`)
+                    : targetPath
+
+                // 再次检查目标文件是否已存在
+                if (finalPath !== targetPath && await fs.pathExists(finalPath)) {
+                    return finalPath
+                }
+
+                await fs.writeFile(finalPath, buffer)
+                return finalPath
             } catch (error) {
                 console.error(`下载失败 [${url}]:`, error.message)
                 return null

@@ -1,4 +1,5 @@
 overrides:
+  postcss: ^8.5.18
   compare-func: ^2.0.0
   'ajv@6.12.6': 6.14.0
   diff: ^5.2.2

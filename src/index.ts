@@ -159,6 +159,18 @@ async function mainJob() {
 }
 
 /**
+ * 校验远端文件是否真实存在
+ *
+ * BaiduPCS-Go 的 upload 命令无论成功失败退出码恒为 0，无法作为成功依据，
+ * 因此上传后必须列出远端目录，确认文件确实存在。
+ * @param zipFilename 待校验的文件名
+ */
+async function verifyRemoteFile(zipFilename: string): Promise<boolean> {
+    const listing = await BaiduPCS.list(REMOTE_BACKUP_PATH)
+    return listing.includes(zipFilename)
+}
+
+/**
  * 备份任务：聚合旧目录并按阈值打包上传
  * @param includeToday 是否包含当天目录（默认由环境变量 ARCHIVE_INCLUDE_TODAY 决定）
  */
@@ -240,7 +252,10 @@ async function archiveJob(includeToday: boolean = ARCHIVE_INCLUDE_TODAY) {
             while (attempt < maxRetry) {
                 attempt++
                 const res = await BaiduPCS.upload(zipFile, REMOTE_BACKUP_PATH)
-                if (res.exitCode === 0) {
+                // BaiduPCS-Go 的 exitCode 不可靠（upload 失败也返回 0），
+                // 必须确认远端文件真实存在才算成功。
+                const uploaded = await verifyRemoteFile(zipFilename)
+                if (uploaded) {
                     console.log(`上传成功 (第 ${attempt} 次尝试)`)
                     recordUpload(zipFile, REMOTE_BACKUP_PATH, 'success')
                     await fs.remove(zipFile)
@@ -250,11 +265,17 @@ async function archiveJob(includeToday: boolean = ARCHIVE_INCLUDE_TODAY) {
                         await fs.remove(item.dirPath)
                     }
                     break
-                } else {
-                    console.error(`上传失败 (第 ${attempt}/${maxRetry} 次尝试), 错误码: ${res.exitCode}`)
-                    if (attempt < maxRetry) {
-                        await new Promise((resolve) => setTimeout(resolve, 5000))
-                    }
+                }
+
+                console.error(`上传失败 (第 ${attempt}/${maxRetry} 次尝试), 退出码: ${res.exitCode}`)
+                if (res.stdout.trim()) {
+                    console.error('上传命令输出:', res.stdout.trim())
+                }
+                if (res.stderr.trim()) {
+                    console.error('上传命令错误输出:', res.stderr.trim())
+                }
+                if (attempt < maxRetry) {
+                    await new Promise((resolve) => setTimeout(resolve, 5000))
                 }
             }
 

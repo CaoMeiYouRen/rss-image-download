@@ -29,13 +29,27 @@ export async function who() {
 
 /**
  * 上传本地文件到百度网盘
+ *
+ * 注意: BaiduPCS-Go 的 upload 命令无论成功失败退出码恒为 0，且其输出（进度、错误）
+ * 全部走 stdout，而 zx 默认只显示 stderr。因此这里显式开启 verbose + quiet(false)
+ * 以显示进度与报错，同时调用方必须通过 list() 校验远端文件是否真实存在。
  */
 export async function upload(from: string, to: string) {
     const flags = [
         from,
         to,
     ]
-    return $`BaiduPCS-Go upload ${flags}`.nothrow().quiet(false)
+    return $`BaiduPCS-Go upload ${flags}`.nothrow().quiet(false).verbose()
+}
+
+/**
+ * 列出远端目录内容
+ * 用于上传后校验文件是否真实存在
+ * @param path 目录路径
+ */
+export async function list(path: string = '/') {
+    const p = await $`BaiduPCS-Go ls ${path}`.nothrow()
+    return p.stdout
 }
 
 /**
@@ -90,4 +104,5 @@ export const BaiduPCS = {
     remove,
     offlinedl,
     search,
+    list,
 }

@@ -52,10 +52,10 @@ WORKDIR /app
 RUN apk update && apk add --no-cache curl unzip bash
 
 # Download and Install BaiduPCS-Go
-RUN wget "https://github.com/qjfoidnh/BaiduPCS-Go/releases/download/v4.0.0/BaiduPCS-Go-v4.0.0-linux-amd64.zip" \
-    && unzip "BaiduPCS-Go-v4.0.0-linux-amd64.zip" \
-    && mv "BaiduPCS-Go-v4.0.0-linux-amd64/BaiduPCS-Go" "/usr/bin/BaiduPCS-Go" \
-    && rm -rf "BaiduPCS-Go-v4.0.0-linux-amd64*" \
+RUN wget "https://github.com/qjfoidnh/BaiduPCS-Go/releases/download/v4.0.2/BaiduPCS-Go-v4.0.2-linux-amd64.zip" \
+    && unzip "BaiduPCS-Go-v4.0.2-linux-amd64.zip" \
+    && mv "BaiduPCS-Go-v4.0.2-linux-amd64/BaiduPCS-Go" "/usr/bin/BaiduPCS-Go" \
+    && rm -rf "BaiduPCS-Go-v4.0.2-linux-amd64*" \
     && BaiduPCS-Go -v
 
 # Copy files from minifier and builder

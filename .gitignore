@@ -40,3 +40,5 @@ temp
 rssConfig.yml
 /data
 /public
+# dependfix
+dependfix-reports/

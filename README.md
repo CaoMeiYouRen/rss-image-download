@@ -1,7 +1,7 @@
 <h1 align="center">rss-image-download </h1>
 <p>
   <img alt="Version" src="https://img.shields.io/github/package-json/v/CaoMeiYouRen/rss-image-download.svg" />
-  <img src="https://img.shields.io/badge/node-%3E%3D20-blue.svg" />
+  <img src="https://img.shields.io/badge/node-%3E%3D22.23.4-blue.svg" />
   <a href="https://github.com/CaoMeiYouRen/rss-image-download#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -31,7 +31,7 @@
 
 ## 📦 依赖要求
 
-- node >=20
+- node ^22.23.4 || >=24.22.1（包含 2026-10 安全公告修复）
 - [BaiduPCS-Go](https://github.com/qjfoidnh/BaiduPCS-Go) (需配置在系统环境变量中)
 
 ## 🚀 快速开始

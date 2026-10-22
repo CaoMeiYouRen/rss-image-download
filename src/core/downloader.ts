@@ -5,8 +5,12 @@ import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import PQueue from 'p-queue'
 import { sleep } from '@/utils/helper'
+import { decodeResponseBody } from '@/utils/response'
 
 axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay })
+
+// 单张图片的最大响应体积，避免不可信 URL 返回超大响应拖垮进程
+const MAX_IMAGE_BYTES = 32 * 1024 * 1024
 
 const IMAGE_MIME_TO_EXT: Record<string, string> = {
     'image/jpeg': '.jpg',
@@ -107,8 +111,15 @@ export class Downloader {
                 const response = await axios.get(url, {
                     responseType: 'arraybuffer',
                     timeout: 30000,
+                    // 图片 URL 来自第三方 RSS 内容，不能让响应进入 Node 的 Brotli 解码路径
+                    // 参见 CVE-2026-111497；关闭自动解压后在业务层显式解码
+                    decompress: false,
+                    maxContentLength: MAX_IMAGE_BYTES,
+                    maxBodyLength: MAX_IMAGE_BYTES,
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        // 不声明 br，降低收到 Brotli 响应的概率；即使服务端仍返回 br 也会被拒绝
+                        'Accept-Encoding': 'gzip, deflate',
                     },
                 })
 
@@ -123,7 +134,10 @@ export class Downloader {
                 // 如果 URL 无法解析出有效后缀，使用 Content-Type 确定的后缀
                 const finalExt = (ext === '.jpg' && !url.includes('.')) ? mimeExt : ext
 
-                const buffer = Buffer.from(response.data)
+                const buffer = await decodeResponseBody(
+                    Buffer.from(response.data),
+                    response.headers['content-encoding'] as string | undefined,
+                )
                 const hash = crypto.createHash('md5').update(buffer).digest('hex')
 
                 // 防"夹"检测

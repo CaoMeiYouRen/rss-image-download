@@ -44,11 +44,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       axios:
-        specifier: ^1.20.0
-        version: 1.20.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)
+        specifier: ^1.21.0
+        version: 1.21.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)
       axios-retry:
         specifier: ^4.5.0
-        version: 4.5.0(axios@1.20.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0))
+        version: 4.5.0(axios@1.21.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0))
       better-bytes:
         specifier: ^1.2.6
         version: 1.2.6
@@ -1267,8 +1267,8 @@ packages:
     peerDependencies:
       axios: 0.x || 1.x
 
-  axios@1.20.0:
-    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
+  axios@1.21.0:
+    resolution: {integrity: sha512-YCzXMB53Q9PZBsh7yN7wtapit4WepwcHS2fP8QhGsBxSz5YtgYobV7GGlWlAJi+RxfU77GQTQi2DSLUma42EYA==}
 
   b4a@1.9.0:
     resolution: {integrity: sha512-dpfcF9fDNR6++cthXR67iyhgqWy9CBouAvIWhIntzBG6cvK/cnIPiZQjBwi/ZqjjBEDGfoNDtmB0kTjroOJ3pQ==}
@@ -5049,12 +5049,12 @@ snapshots:
 
   await-to-js@3.0.0: {}
 
-  axios-retry@4.5.0(axios@1.20.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)):
+  axios-retry@4.5.0(axios@1.21.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)):
     dependencies:
-      axios: 1.20.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)
+      axios: 1.21.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)
       is-retry-allowed: 2.2.0
 
-  axios@1.20.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0):
+  axios@1.21.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0):
     dependencies:
       follow-redirects: 1.16.1(debug@4.4.3(supports-color@7.1.0))
       form-data: 4.0.6
@@ -6954,7 +6954,7 @@ snapshots:
   push-all-in-one@4.5.4(supports-color@7.1.0):
     dependencies:
       '@colors/colors': 1.6.1
-      axios: 1.20.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)
+      axios: 1.21.0(debug@4.4.3(supports-color@7.1.0))(supports-color@7.1.0)
       debug: 4.4.3(supports-color@7.1.0)
       https-proxy-agent: 9.1.0(supports-color@7.1.0)
       nodemailer: 9.1.1
